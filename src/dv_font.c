@@ -126,6 +126,7 @@ void font_draw_string(font_t *font, const char *string, uint32_t x, uint32_t y, 
 
     cx -= font->head_kerns[ascii_code];
 
+    // TODO: I could store the calculated FBR metrics in a layout struct.
     dv_fbr_blit(font->glyphs[ascii_code], dv_fbr_verify(target, cx, cy, cw, ch));
 
     cx += font->glyphs[ascii_code].w;

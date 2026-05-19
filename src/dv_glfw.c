@@ -126,6 +126,8 @@ dv_fb_t *dv_glfw_init(void){
   return SCREEN;
 }
 
+// TODO: There should be something maintaining aspect ratio.
+
 void dv_glfw_draw_and_swap(){
   static int ww, wh;
   glfwGetFramebufferSize(WINDOW, &ww, &wh);
