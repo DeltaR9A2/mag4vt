@@ -1,8 +1,5 @@
 #include "dv_glfw.h"
 
-#define VIRTUAL_SCREEN_W 640
-#define VIRTUAL_SCREEN_H 360
-
 static bool KEEPGOING;
 
 static const char* vertex_shader_src =
@@ -81,7 +78,7 @@ dv_fb_t *dv_glfw_init(void){
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  WINDOW = glfwCreateWindow(1280, 720, "DV_GLFW_WINDOW", NULL, NULL);
+  WINDOW = glfwCreateWindow(960, 640, "DV_GLFW_WINDOW", NULL, NULL);
   glfwMakeContextCurrent(WINDOW);
 
   if(!WINDOW){ 
@@ -146,8 +143,12 @@ void dv_glfw_draw_and_swap(){
   glfwSwapBuffers(WINDOW);
 }
 
-void dv_glfw_add_keyfun(GLFWkeyfun cb){
+void dv_glfw_set_key_callback(GLFWkeyfun cb){
   glfwSetKeyCallback(WINDOW,cb);
+}
+
+void dv_glfw_set_char_callback(GLFWcharfun cb){
+  glfwSetCharCallback(WINDOW,cb);
 }
 
 void dv_glfw_stop_game(){
@@ -165,3 +166,4 @@ int32_t dv_glfw_get_ticks(void){
 void dv_glfw_exit(void){
   glfwTerminate();
 }
+
