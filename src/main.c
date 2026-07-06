@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <string.h>
 
 #include "dv_glfw.h"
 #include "dv_font.h"
@@ -18,6 +19,21 @@ typedef struct{
 input_record_t INPUT_HISTORY[INPUT_HISTORY_LEN];
 int HISTORY_POS = 0;
 
+void execute_input_buffer(void){
+  static char command[20];
+
+  memset(command, 0, 20);
+
+  for( int i=0; i<16; i++ ){
+    command[i] = INPUT_BUFFER[i];
+    if(command[i] == ' ' ){ command[i] = '\0'; }
+    if(command[i] == '\0'){ break; }
+  }
+
+  int ret = strcmp(command, "exit");
+  if( ret == 0 ){ dv_glfw_stop_game(); }
+}
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
   (void)mods;
   (void)window;
@@ -29,6 +45,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }else if(key == GLFW_KEY_BACKSPACE){
       if(INPUT_POS > 0){ INPUT_POS -= 1; INPUT_BUFFER[INPUT_POS] = '\0'; }
     }else if(key == GLFW_KEY_ENTER || key == GLFW_KEY_KP_ENTER){
+      execute_input_buffer();
       INPUT_HISTORY[HISTORY_POS].tick = TICK;
       sprintf(INPUT_HISTORY[HISTORY_POS].string, "%s", INPUT_BUFFER);
       HISTORY_POS += 1;
