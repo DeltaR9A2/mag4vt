@@ -106,7 +106,7 @@ uint32_t font_get_width(font_t *font, const char *string){
       w -= font->head_kerns[ascii_code];
       w += font->glyphs[ascii_code].w;
       w -= font->tail_kerns[ascii_code];
-      w += 1;
+//    w += 1;
   }
   return w;
 }
@@ -131,7 +131,7 @@ void font_draw_string(font_t *font, const char *string, uint32_t x, uint32_t y, 
 
     cx += font->glyphs[ascii_code].w;
     cx -= font->tail_kerns[ascii_code];
-    cx += 1;
+//  cx += 1;
   }
 }
 
