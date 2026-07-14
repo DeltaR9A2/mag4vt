@@ -12,7 +12,7 @@ export PC := pkg-config
 ###############################
 export PACKAGES := glfw3
 export TARGET := game
-export CFLAGS := -std=c11 -g -Wall -Wextra -Wfatal-errors -O2 -Iinc `$(PC) --cflags $(PACKAGES)` 
+export CFLAGS := -std=c23 -g -Wall -Wextra -Wfatal-errors -O2 -Iinc `$(PC) --cflags $(PACKAGES)`
 export LFLAGS := `$(PC) --libs $(PACKAGES)` -lGL -lm
 export REMOVE  := rm -rf
 ###############################
