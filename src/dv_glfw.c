@@ -16,9 +16,12 @@ static const char* fragment_shader_src =
   "#version 330 core\n"
   "in vec2 texCoord;\n"
   "out vec4 FragColor;\n"
+  "uniform vec2 vrtSize;\n"
   "uniform sampler2D screenTex;\n"
   "void main() {\n"
-  "    FragColor = texture(screenTex, texCoord);\n"
+  "  vec2 vrtPos = vrtSize*texCoord;\n"
+  "  float fade = clamp(0.0, 1.0, 1.5-length(fract(vrtPos)));\n"
+  "  FragColor =  vec4(fade,fade,fade,1.0) * texture(screenTex, texCoord);\n"
   "}\n";
 
 static float QUAD[] = {  -1, -1,  0,  1,
@@ -78,7 +81,10 @@ dv_fb_t *dv_glfw_init(void){
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  WINDOW = glfwCreateWindow(960, 640, "DV_GLFW_WINDOW", NULL, NULL);
+  WINDOW = glfwCreateWindow(
+    VIRTUAL_SCREEN_W*3, VIRTUAL_SCREEN_H*3,
+    "DV_GLFW_WINDOW", NULL, NULL);
+
   glfwMakeContextCurrent(WINDOW);
 
   if(!WINDOW){ 
@@ -128,7 +134,19 @@ dv_fb_t *dv_glfw_init(void){
 void dv_glfw_draw_and_swap(){
   static int ww, wh;
   glfwGetFramebufferSize(WINDOW, &ww, &wh);
-  glViewport(0, 0, ww, wh);
+
+  int scale_x = ww / SCREEN->w;
+  int scale_y = wh / SCREEN->h;
+  int scale = (scale_x < scale_y) ? scale_x : scale_y;
+
+  if (scale < 1) scale = 1;
+
+  int vp_w = SCREEN->w * scale;
+  int vp_h = SCREEN->h * scale;
+  int vp_x = (ww - vp_w) / 2;
+  int vp_y = (wh - vp_h) / 2;
+
+  glViewport(vp_x, vp_y, vp_w, vp_h);
 
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -136,6 +154,10 @@ void dv_glfw_draw_and_swap(){
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SCREEN->w, SCREEN->h, GL_RGBA, GL_UNSIGNED_BYTE, SCREEN->pixels);
 
   glUseProgram(SHADER);
+
+  glUniform2f(glGetUniformLocation(SHADER, "vrtSize"), (float)SCREEN->w, (float)SCREEN->h);
+  glUniform1i(glGetUniformLocation(SHADER, "screenTex"), 0);
+
   glBindVertexArray(VAO);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, SCRTEX);
